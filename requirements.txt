@@ -1,0 +1,6 @@
+google_api_python_client==2.127.0
+gspread==6.1.0
+numpy==1.26.4
+pandas==2.2.2
+protobuf==5.26.1
+python-dotenv==1.0.1
