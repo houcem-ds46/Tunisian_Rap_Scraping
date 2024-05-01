@@ -1,36 +1,17 @@
 import pandas as pd
 from datetime import datetime
 import numpy as np
+import os
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-LOCAL_EXECUTION = True # put to false if code is excecuted in Google Collab
 
-if not LOCAL_EXECUTION:
-    API_KEY = "xxxxxxxxxxxxxxxxxxxxx"
-    MY_GOOGLE_SHEET_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxx"
-    # Autenticating to google
-    from google.colab import auth
-    import gspread
-    from google.auth import default
-    auth.authenticate_user()
-    creds, _ = default()
-    gc = gspread.authorize(creds)
-else:
-    import os
-    from os.path import join, dirname
-    from dotenv import load_dotenv
-
-    dotenv_path = join(dirname(__file__), '.env')
-    load_dotenv(dotenv_path)
-    API_KEY = os.environ.get("API_KEY")
-    MY_GOOGLE_SHEET_ID = os.environ.get("MY_GOOGLE_SHEET_ID")
 
 
 def get_channel_info(id):
 
-    youtube = build("youtube", "v3", developerKey=API_KEY)
+    youtube = build("youtube", "v3", developerKey=os.environ.get("API_KEY"))
     request = youtube.channels().list(
         id=id,
         part="snippet,contentDetails,statistics",
@@ -52,7 +33,7 @@ def get_channel_info(id):
 
 def get_latest_video_url(id):
     try:
-        youtube = build("youtube", "v3", developerKey=API_KEY)
+        youtube = build("youtube", "v3", developerKey=os.environ.get("API_KEY"))
         request = youtube.channels().list(
         id=id,
         part='contentDetails'
@@ -88,7 +69,7 @@ def post_process(df_input):
 
 
 def get_channel_cover_image(channel_id):
-    youtube = build("youtube", "v3", developerKey=API_KEY)
+    youtube = build("youtube", "v3", developerKey=os.environ.get("API_KEY"))
     request = youtube.channels().list(
         part='snippet',
         id=channel_id
@@ -166,9 +147,16 @@ def retrieve_youtube_information(df):
 
 
 def concatenate_with_previous_results(df):
-    if not LOCAL_EXECUTION:
+    if os.environ.get("LOCAL_EXECUTION") == "False":
+        from google.colab import auth
+        import gspread
+        from google.auth import default
+        # Autenticating to google
+        auth.authenticate_user()
+        creds, _ = default()
+        gc = gspread.authorize(creds)
         # Defining my worksheet
-        worksheet = gc.open_by_key(MY_GOOGLE_SHEET_ID).worksheet('output_new')
+        worksheet = gc.open_by_key(os.environ.get("MY_GOOGLE_SHEET_ID")).worksheet('output_new')
 
         # Get_all_values gives a list of rows
         rows = worksheet.get_all_values()
@@ -334,9 +322,16 @@ def add_gaps_compared_to_last_n_days(df, n_days, tolerated_gap_nb_of_days):
 
 
 def get_input_sheet():
-    if not LOCAL_EXECUTION:
+    if os.environ.get("LOCAL_EXECUTION") == "False":
+        from google.colab import auth
+        import gspread
+        from google.auth import default
+        # Autenticating to google
+        auth.authenticate_user()
+        creds, _ = default()
+        gc = gspread.authorize(creds)
         # Defining my worksheet
-        worksheet = gc.open_by_key(MY_GOOGLE_SHEET_ID).worksheet('input')
+        worksheet = gc.open_by_key(os.environ.get("MY_GOOGLE_SHEET_ID")).worksheet('input')
         # Get_all_values gives a list of rows
         rows = worksheet.get_all_values()
         # Convert to a DataFrame
@@ -346,7 +341,14 @@ def get_input_sheet():
     return df
 
 
+# def launch_all_process(local_execution=True, api_key="", my_google_sheet_id=""):
 def launch_all_process():
+    from os.path import join, dirname
+    from dotenv import load_dotenv
+
+    dotenv_path = join(dirname(__file__), '.env')
+    load_dotenv(dotenv_path)
+
     df = get_input_sheet()
     df = retrieve_youtube_information(df)
     df = concatenate_with_previous_results(df)
