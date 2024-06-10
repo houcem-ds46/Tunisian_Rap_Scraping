@@ -184,7 +184,7 @@ def concatenate_with_previous_results(df):
     df_final['createdAt'] = pd.to_datetime(df_final['createdAt']).dt.date.astype(str)
     df_final['ScrapingTimestamp'] = pd.to_datetime(df_final['ScrapingTimestamp']).dt.strftime('%Y-%m-%d %H:%M:%S')
 
-    df_final['viewCount'] = df_final['viewCount'].astype(int)
+    df_final['viewCount'] = df_final['viewCount'].astype("int64")
     df_final['subscriberCount'] = df_final['subscriberCount'].astype(int)
     df_final['videoCount'] = df_final['videoCount'].astype(int)
     df_final['AverageViewsPerVideo'] = df_final['AverageViewsPerVideo'].astype(int)
