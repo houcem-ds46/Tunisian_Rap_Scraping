@@ -345,6 +345,7 @@ def get_input_sheet():
     return df
 
 
+
 # def launch_all_process(local_execution=True, api_key="", my_google_sheet_id=""):
 def launch_all_process():
     from os.path import join, dirname
@@ -367,6 +368,13 @@ def launch_all_process():
     df = add_gaps_compared_to_last_n_days(df, n_days=30, tolerated_gap_nb_of_days=5)
     df = add_gaps_compared_to_last_n_days(df, n_days=15, tolerated_gap_nb_of_days=4)
     df = add_gaps_compared_to_last_n_days(df, n_days=7, tolerated_gap_nb_of_days=3)
+
+    df['ArtistRankAccordingToViewsPerTimestamp'] = (
+        df.groupby('ScrapingTimestamp')
+        ['viewCount']
+        .rank(ascending=False, method='dense')
+        .astype(int)
+    )
 
     return df
 
