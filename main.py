@@ -242,6 +242,10 @@ def add_gaps_compared_to_last_n_days(df, n_days, tolerated_gap_nb_of_days):
     col_name = str(n_days) + "_Days_Ago"
     last_n_days = [last_scraping_date - pd.Timedelta(days=i) for i in range(n_days + 1 + tolerated_gap_nb_of_days)]
 
+    # If columns of n_days already exists then drop them
+    columns_to_drop = [col for col in df.columns if str(n_days) in col]
+    df = df.drop(columns=columns_to_drop)
+
     # Create temporary dataframe with all required dates
     df_tmp = pd.DataFrame(last_n_days, columns=["Date"]).assign(key=1)
     df_tmp["LastScrapingDate"] = df_tmp["Date"].max()
