@@ -5,7 +5,7 @@ import os
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+pd.set_option('future.no_silent_downcasting', True)
 
 
 
@@ -194,7 +194,7 @@ def concatenate_with_previous_results(df):
     # fill nan with empty string
     df_final["CoverImageUrl"] = df_final["CoverImageUrl"].fillna("")
     df_final["LastestVideoUrlEmbeded"] = df_final["LastestVideoUrlEmbeded"].fillna("")
-    df_final["isLastScraping"] = df_final["isLastScraping"].fillna(False)
+    df_final["isLastScraping"] = df_final["isLastScraping"].fillna(False).infer_objects(copy=False)
 
     return df_final
 
