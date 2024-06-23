@@ -9,15 +9,17 @@ import isodate
 pd.set_option('future.no_silent_downcasting', True)
 
 
-
 def get_channel_info(id):
+    """
+    Retrieves channel information such as title and subscriberCount
+    :param id:
+    :return:
+    """
 
     youtube = build("youtube", "v3", developerKey=os.environ.get("API_KEY"))
     request = youtube.channels().list(
         id=id,
         part="snippet,contentDetails,statistics",
-        # categoryId="UCV9x1Bo83ByXbqJga1ZxaJg",
-        # forUsername="@TRIPPYBOYZ"
     )
 
     response = request.execute()
@@ -33,6 +35,12 @@ def get_channel_info(id):
 
 
 def get_latest_video_url(id):
+    """
+    Retrieves the latest video url based on youtube channel id
+    Makes sure the retrieved video is not a youtube short (less than 60 seconds)
+    :param id:
+    :return:
+    """
     try:
         # Initialize the YouTube API client
         youtube = build("youtube", "v3", developerKey=os.environ.get("API_KEY"))
@@ -49,7 +57,7 @@ def get_latest_video_url(id):
         )
         playlist_id = request['items'][0]['contentDetails']['relatedPlaylists']['uploads']
 
-        # Retrieve the latest 5 videos from the playlist
+        # Retrieve the latest 20 videos from the playlist
         playlistitems_response = youtube.playlistItems().list(
             playlistId=playlist_id,
             part='snippet',
@@ -97,8 +105,12 @@ def get_latest_video_url(id):
         return None
 
 
-
 def post_process(df_input):
+    """
+    Cleaning and casting operations
+    :param df_input:
+    :return:
+    """
     df = df_input.pipe(lambda x: x[x["videoCount"].astype(int) > 0]).reset_index(drop=True)
     df["createdAt"] = df["createdAt"].apply(lambda x: x[:10])
     df["AverageViewsPerVideo"] = df["viewCount"].astype(np.int64) / df["videoCount"].astype(np.int64)
@@ -112,6 +124,11 @@ def post_process(df_input):
 
 
 def get_channel_cover_image(channel_id):
+    """
+    Retrieves the cover picture corresponding to the channel id
+    :param channel_id:
+    :return:
+    """
     youtube = build("youtube", "v3", developerKey=os.environ.get("API_KEY"))
     request = youtube.channels().list(
         part='snippet',
@@ -128,6 +145,11 @@ def get_channel_cover_image(channel_id):
 
 
 def udf_date_diff(x):
+    """
+    Custom function to calculate the difference in years between two dates
+    :param x: 
+    :return:
+    """
     start_date = datetime(int(x[:4]), int(x[5:7]), int(x[8:10]), 00, 00)
     end_date = datetime.today() #.strftime('%Y-%m-%d') #datetime(2023, 4, 23, 00, 00)
     difference = end_date - start_date
@@ -160,18 +182,25 @@ def udf_cluster(x):
 
 
 def retrieve_youtube_information(df):
+    """
+    Loops over every youtube channel and retrieves all information
+    :param df:
+    :return:
+    """
     # Keep only artists flaged with keep = 1
     length_before = len(df)
     df = df[df["Keep"].astype(int) == 1].reset_index(drop=True)
     length_after = len(df)
-    print("length_before : ", length_before, " | length_after: ", length_after)
+    print("Filtering out artists based on column named keep...")
+    print("\t- Length_before : ", length_before, " =>  length_after: ", length_after)
 
     # Loop over every youtube channel and retrieve usefull data
+    print("Retrieve video data from Youtube API...")
     df_tmp = []
     for _, row in df.iterrows():
         id = row["YoutubeChannel"]
         name = row["Artist"]
-        print(name, "...")
+        print("\t- ", name, "...")
         id_cleaned = id.replace("https://www.youtube.com/channel/", "")
         df_id = get_channel_info(id_cleaned)
         df_id["YoutubeChannel"] = id
@@ -244,7 +273,7 @@ def concatenate_with_previous_results(df):
 
 
 def add_flag_for_new_videos_released_since_last_scraping(df):
-    # Add new column to flag new clips released since the last scraping date
+    # Add new column to flag new video clips released since the last scraping date
     df['ScrapingDate_converted'] = pd.to_datetime(df['ScrapingDate'])
     df = df.sort_values(by=['title', 'ScrapingDate_converted'], ascending=[True, True])
     df['LatestVideoUrl_previous'] = df.groupby(["title"])['LastestVideoUrl'].shift()
@@ -313,7 +342,6 @@ def add_gaps_compared_to_last_n_days(df, n_days, tolerated_gap_nb_of_days):
             how="left"
         )
     )
-
 
     # Keep only the closest event with its corresponding view count for each title
     df_tmp = (
@@ -389,8 +417,6 @@ def get_input_sheet():
     return df
 
 
-
-# def launch_all_process(local_execution=True, api_key="", my_google_sheet_id=""):
 def launch_all_process():
     from os.path import join, dirname
     from dotenv import load_dotenv
