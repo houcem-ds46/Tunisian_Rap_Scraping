@@ -1,5 +1,26 @@
-# Tunisian_Rap_Scraping
-This repository retrieves information from YoutubeAPI about the statistics of Tunisian Rap Artists
+# Project Presentation: Tunisian Rap YouTube Data Analytics
+
+This repository retrieves information from the YouTube API to perform data analytics on the Tunisian Rap Artists ecosystem.
+
+The ObservableHQ dashboard associated can be found [here](https://datasens.fr/temp/tunisian_rappers_deviceType_2.html).
+![image](https://github.com/houcem-ds46/Tunisian_Rap_Scraping/assets/34838300/33584c83-a107-423e-bad7-d4bd8caf8f63)
+
+Creator: [Houcem CHAABANE](https://www.linkedin.com/in/houcem-eddine-chaabane/)  
+
+A blog post about this respository's topic can be found [here](https://tunisianrapblog.simple.ink/).  
+
+Special thanks to [Toulouse Dataviz](https://toulouse-dataviz.fr/), [Alain Ottenheimer](https://www.linkedin.com/in/alainottenheimer/), and [Vincent Vivanloc](https://www.linkedin.com/in/vvivanloc) for their amazing and generous help.
+
+
+## Data Flow Diagram
+
+```plaintext
++----------------+         +-------------+         +-----------------+
+|                |         |             |         |                 |
+| Input Dataset  +-------> | Processing  +-------> | Output Dataset  |
+|                |         |             |         |                 |
++----------------+         +-------------+         +-----------------+
+```
 
 ## Installation
 
