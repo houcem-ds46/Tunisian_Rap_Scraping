@@ -5,6 +5,7 @@ import os
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+import isodate
 pd.set_option('future.no_silent_downcasting', True)
 
 
@@ -33,26 +34,68 @@ def get_channel_info(id):
 
 def get_latest_video_url(id):
     try:
+        # Initialize the YouTube API client
         youtube = build("youtube", "v3", developerKey=os.environ.get("API_KEY"))
-        request = youtube.channels().list(
-        id=id,
-        part='contentDetails'
-    ).execute()
+
+        # Get the upload playlist ID for the channel
+        request = (
+            youtube
+            .channels()
+            .list(
+               id=id,
+               part='contentDetails'
+            )
+            .execute()
+        )
         playlist_id = request['items'][0]['contentDetails']['relatedPlaylists']['uploads']
 
-        # Retrieve the latest video from the playlist
+        # Retrieve the latest 5 videos from the playlist
         playlistitems_response = youtube.playlistItems().list(
             playlistId=playlist_id,
             part='snippet',
-            maxResults=1
+            maxResults=20
         ).execute()
 
-        latest_video_id = playlistitems_response['items'][0]['snippet']['resourceId']['videoId']
-        video_url = f'https://www.youtube.com/watch?v={latest_video_id}'
-        return video_url
+        # Retrieve the latest video with a duration of more than 60 seconds
+        for item in playlistitems_response['items']:
+            video_id = item['snippet']['resourceId']['videoId']
+            video_details = youtube.videos().list(
+                id=video_id,
+                part='contentDetails'
+            ).execute()
+            duration = video_details['items'][0]['contentDetails']['duration']
+
+            # Parse duration to seconds
+            duration_in_seconds = isodate.parse_duration(duration).total_seconds()
+            if duration_in_seconds > 60:
+                latest_video_id = item['snippet']['resourceId']['videoId']
+                video_url = f'https://www.youtube.com/watch?v={latest_video_id}'
+                return video_url
+
+        # If no video longer than 60 seconds is found, return a message
+        print(f"-------------------No video longer than 60 seconds found for youtube channel id {id}")
+        return None
+
     except HttpError as e:
+        # Handle HTTP errors from the YouTube API
         print(f'An HTTP error {e.resp.status} occurred:\n{e.content}')
-        return ""
+        return None
+
+    except KeyError as e:
+        # Handle missing keys in the response data
+        print(f'Key error: {e}')
+        return None
+
+    except isodate.ISO8601Error as e:
+        # Handle errors in parsing ISO 8601 duration
+        print(f'Duration parsing error: {e}')
+        return None
+
+    except Exception as e:
+        # Handle all other exceptions
+        print(f'An unexpected error occurred: {e}')
+        return None
+
 
 
 def post_process(df_input):
@@ -94,11 +137,12 @@ def udf_date_diff(x):
 
 def convert_to_embed(url):
     # Function to convert Youtube_url to Youtube_url_embed format
-    if len(url) > 1:
+    if (url is not None) and (len(url) > 1):
         video_id = url.split('v=')[1]
         return f'https://www.youtube.com/embed/{video_id}'
     else:
         return ""
+
 
 def udf_cluster(x):
     if x > 1_000_000_000:

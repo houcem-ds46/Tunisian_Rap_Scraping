@@ -4,3 +4,4 @@ numpy==1.26.4
 pandas==2.2.2
 protobuf==5.26.1
 python-dotenv==1.0.1
+isodate
