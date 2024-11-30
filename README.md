@@ -1,14 +1,14 @@
 # Project Presentation: Tunisian Rap YouTube Data Analytics
+Creator: [Houcem CHAABANE](https://www.linkedin.com/in/houcem-eddine-chaabane/)  
 
 This repository retrieves information from the YouTube API to perform data analytics on the Tunisian Rap Artists ecosystem.
 
-The ObservableHQ dashboard associated can be found [here](https://toulousedataviz.github.io/collections/tunisian_rappers/tunisian_rappers_deviceType_5.html)
+- The ObservableHQ dashboard associated can be found [here](https://toulousedataviz.github.io/collections/tunisian_rappers/tunisian_rappers_deviceType_5.html)
+- A blog post about this respository's topic can be found [here](https://tunisianrapblog.simple.ink/).  
 
 ![image](https://github.com/houcem-ds46/Tunisian_Rap_Scraping/assets/34838300/33584c83-a107-423e-bad7-d4bd8caf8f63)
 
-Creator: [Houcem CHAABANE](https://www.linkedin.com/in/houcem-eddine-chaabane/)  
 
-A blog post about this respository's topic can be found [here](https://tunisianrapblog.simple.ink/).  
 
 Special thanks to [Toulouse Dataviz](https://toulouse-dataviz.fr/), [Alain Ottenheimer](https://www.linkedin.com/in/alainottenheimer/), and [Vincent Vivanloc](https://www.linkedin.com/in/vvivanloc) for their amazing and generous help.
 
@@ -120,3 +120,7 @@ The output dataset from this repository contains detailed information about vari
 | viewsGapTo_7_Days_Ago                     | Difference in the number of views between the latest scraping date and the scraping conducted 7 days (+/- 3 days) ago (applicable only for the row corresponding to the latest scraping). |
 | viewsGrowthPercentage_7_Days_Ago          | Percentage difference in the number of views between the latest scraping date and the scraping conducted 7 days (+/- 3 days) ago (applicable only for the row corresponding to the latest scraping). |
 | ArtistRankAccordingToViewsPerTimestamp    | The artist's rank based on the number of views. This rank is calculated for all artists at each scraping date timestamp. The artist ranked 1 has the highest number of views. |
+
+
+
+Creator: [Houcem CHAABANE](https://www.linkedin.com/in/houcem-eddine-chaabane/)  
