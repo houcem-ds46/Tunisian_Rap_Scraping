@@ -2,7 +2,7 @@
 
 This repository retrieves information from the YouTube API to perform data analytics on the Tunisian Rap Artists ecosystem.
 
-The ObservableHQ dashboard associated can be found [here]([https://datasens.fr/temp/tunisian_rappers_deviceType_2.html](https://toulousedataviz.github.io/collections/tunisian_rappers/tunisian_rappers_deviceType_5.html)).
+The ObservableHQ dashboard associated can be found [here](https://toulousedataviz.github.io/collections/tunisian_rappers/tunisian_rappers_deviceType_5.html)
 
 ![image](https://github.com/houcem-ds46/Tunisian_Rap_Scraping/assets/34838300/33584c83-a107-423e-bad7-d4bd8caf8f63)
 
